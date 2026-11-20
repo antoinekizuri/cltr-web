@@ -1,0 +1,13 @@
+{
+  "services": [
+    { "name": "Adult Cut", "description": "A full grooming experience. Your cut includes a wash using shampoo and conditioner then finished with a hot towel treatment to leave you looking fresh.", "duration_minutes": 50, "price_cents": 14000, "status": "active" },
+    { "name": "Bald Razor Cut", "description": "A clean, smooth razor finish for that sharp bald look. Includes a wash with shampoo to start and a hot towel treatment to finish it off right.", "duration_minutes": 55, "price_cents": 15000, "status": "active" },
+    { "name": "Kids' Cut", "description": "A relaxed, friendly cut made for kids. Includes a wash with shampoo and conditioner, plus a hot towel finish to match the grown-up experience.", "duration_minutes": 50, "price_cents": 12000, "status": "active" },
+    { "name": "Beard Treatment", "description": "A detailed and full beard treatment, using a hot towel and finishing with beard oil for hydration and clean growth.", "duration_minutes": 30, "price_cents": 7000, "status": "active" },
+    { "name": "Line Up", "description": "A quick touch-up to sharpen your edges and clean up your hairline. Finished with a warm hot towel for that extra fresh feel.", "duration_minutes": 25, "price_cents": 7000, "status": "active" },
+    { "name": "Adult Luxury Cut", "description": "The CLTR experience taken up a notch. Includes your adult cut with wash and hot towel treatment, an express facial cleanse to refresh your skin, and a buff and shine for your nails.", "duration_minutes": 100, "price_cents": 60000, "status": "active" },
+    { "name": "Luxurious Razor Bald Cut", "description": "A sharp, smooth razor finish paired with premium self-care. Includes your bald razor cut with wash and hot towel treatment, an express facial, and a buff and shine for your nails to complete the look.", "duration_minutes": 100, "price_cents": 65000, "status": "active" },
+    { "name": "Bleach (Add-On)", "description": "Lighten things up with a professional service, done carefully to give you a bold look. From R150.", "duration_minutes": 45, "price_cents": 15000, "status": "active" },
+    { "name": "Colour (Add-On)", "description": "Add some colour and personality to your style. Whether it's a subtle or a bold change, tailored for you. From R250.", "duration_minutes": 100, "price_cents": 25000, "status": "active" }
+  ]
+}
