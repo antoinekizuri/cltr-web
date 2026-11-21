@@ -151,7 +151,7 @@ export default function CltrBarbershop() {
           <div className="relative mx-auto w-full max-w-7xl px-4 pb-14 pt-32 sm:px-6 sm:pb-20">
             <div className="max-w-2xl cltr-rise">
               <Eyebrow>Florida Road, Durban</Eyebrow>
-              <h1 data-kizuri-edit="sthgx8" className="mt-5 font-display text-[22vw] uppercase leading-[0.86] tracking-tight text-white sm:text-[8.5rem] lg:text-[clamp(6.5rem,16vh,10rem)]">
+              <h1 data-kizuri-edit="sthgx8" className="mt-5 font-display text-[21vw] uppercase leading-[1] tracking-tight text-white sm:text-[8rem] lg:text-[clamp(6rem,14.5vh,9.5rem)]">
                 <span data-kizuri-edit="1tzg362" className="block">CUT</span>
                 <span data-kizuri-edit="iiwcir" className="block">CULTURE</span>
                 <span data-kizuri-edit="1s7wf05" className="block text-copper-light">LEGACY</span>
