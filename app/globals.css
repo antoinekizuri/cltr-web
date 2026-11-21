@@ -25,6 +25,84 @@
     --popover-foreground: 210 12% 88%;
     --radius: 0.5rem;
   }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+  body { background: #0d0f12; font-family: var(--font-poppins), 'Poppins', system-ui, sans-serif; }
+  ::selection { background: #b87333; color: #0d0f12; }
 }
 
-body { font-family: 'Poppins', system-ui, sans-serif; }
+@layer components {
+  .cltr-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-copper font-semibold text-obsidian transition-all duration-200;
+    @apply hover:bg-copper-light hover:shadow-[0_10px_30px_-10px_rgba(216,146,87,0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-light focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian;
+  }
+  .cltr-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/25 font-semibold text-white backdrop-blur-sm transition-colors duration-200;
+    @apply hover:border-copper-light hover:text-copper-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-light;
+  }
+  .cltr-tile {
+    @apply relative overflow-hidden rounded-2xl bg-zinc-800;
+  }
+  .cltr-tile img {
+    @apply h-full w-full object-cover transition-transform duration-700 ease-out;
+  }
+  .cltr-tile:hover img { transform: scale(1.06); }
+}
+
+/* Film grain over the hero video: hides the softness of the 704px source on
+   large screens and gives the footage some texture. */
+.cltr-grain {
+  pointer-events: none;
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.cltr-glow {
+  background:
+    radial-gradient(60% 120% at 100% 50%, rgba(184, 115, 51, 0.22), transparent 70%),
+    radial-gradient(40% 80% at 0% 100%, rgba(184, 115, 51, 0.10), transparent 70%);
+}
+
+@keyframes cltr-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+.cltr-rise { animation: cltr-rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+@keyframes cltr-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.cltr-marquee { animation: cltr-marquee 32s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .cltr-rise, .cltr-marquee { animation: none; }
+}
+
+/* ── Kizuri price list ([data-kizuri-shop="price-list"]) in CLTR colours ──
+   The list itself is drawn by kizuri-booking.js from the dashboard's Services
+   tab; these variables only restyle it. */
+.cltr-price-list {
+  --kz-pl-text: #d9dde3;
+  --kz-pl-muted: rgba(217, 221, 227, 0.6);
+  --kz-pl-surface: rgba(255, 255, 255, 0.025);
+  --kz-pl-border: rgba(255, 255, 255, 0.09);
+  --kz-pl-accent: #d89257;
+  --kz-pl-accent-contrast: #0d0f12;
+  --kz-pl-radius: 18px;
+  --kz-pl-heading-font: var(--font-anton), 'Anton', Impact, sans-serif;
+  font-family: var(--font-poppins), 'Poppins', system-ui, sans-serif;
+}
+.cltr-price-list .kz-pl-group-name { font-weight: 400; font-size: 26px; letter-spacing: 0.04em; color: #fff; }
+.cltr-price-list .kz-pl-price { font-weight: 400; font-size: 24px; }
+.cltr-price-list .kz-pl-group[open] { border-color: rgba(216, 146, 87, 0.35); }
+
+/* Both runtimes copy their font from <body>, but next/font's Poppins variable
+   lives on the page wrapper (.cltr), so set it on the widgets directly. */
+.cltr .kz-pl-root,
+.cltr .kz-bk-root { font-family: var(--font-poppins), 'Poppins', system-ui, sans-serif !important; }
+
+/* Booking widget: fill its column. The runtime themes itself from the page. */
+.cltr-booking .kz-bk-root { max-width: none; }

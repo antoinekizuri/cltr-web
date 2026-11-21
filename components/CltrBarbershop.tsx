@@ -1,14 +1,17 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { Menu, X, Scissors, Clock, MapPin, Mail, MessageCircle, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion'
-import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet'
+import React, { useState, useEffect, useRef } from 'react'
+import { Anton, Poppins } from 'next/font/google'
+import { Menu, X, MapPin, Mail, MessageCircle, ArrowRight, ArrowUpRight } from 'lucide-react'
+
+const anton = Anton({ weight: '400', subsets: ['latin'], variable: '--font-anton', display: 'swap' })
+const poppins = Poppins({ weight: ['400', '500', '600', '700'], subsets: ['latin'], variable: '--font-poppins', display: 'swap' })
 
 export const SITE_NAME = "BANTU CLTR"
 
 const LOGO = "https://yejeustukvivoacbkfde.supabase.co/storage/v1/object/public/chat-uploads/71c71eac-c67a-4e8d-b11e-471e90f52417/1791546111777-kqkvmjtl.jpeg"
+const WHATSAPP = "https://wa.me/27783562462"
+const MAPS = "https://www.google.com/maps/search/?api=1&query=233+Florida+Road+Durban"
 
 const NAV_ITEMS = [
   { label: 'Home', href: '#home' },
@@ -18,25 +21,17 @@ const NAV_ITEMS = [
   { label: 'Visit', href: '#visit' },
 ]
 
-const PRIME = [
-  { name: "Adult Cut", desc: "A full grooming experience. Your cut includes a wash using shampoo and conditioner then finished with a hot towel treatment to leave you looking fresh.", price: "R140", duration: "50 min" },
-  { name: "Bald Razor Cut", desc: "A clean, smooth razor finish for that sharp bald look. Includes a wash with shampoo to start and a hot towel treatment to finish it off right.", price: "R150", duration: "55 min" },
-  { name: "Kids' Cut", desc: "A relaxed, friendly cut made for kids. Includes a wash with shampoo and conditioner, plus a hot towel finish to match the grown-up experience.", price: "R120", duration: "50 min" },
-  { name: "Beard Treatment", desc: "A detailed and full beard treatment, using a hot towel and finishing with beard oil for hydration and clean growth.", price: "R70", duration: "30 min" },
-  { name: "Line Up", desc: "A quick touch-up to sharpen your edges and clean up your hairline. Finished with a warm hot towel for that extra fresh feel.", price: "R70", duration: "25 min" },
-]
+const TICKER = ['Fades', 'Razor bald', 'Beard care', 'Line ups', 'Hot towel', 'Kids cuts', 'Colour', 'Bleach']
 
-const LUX = [
-  { name: "Adult Luxury Cut", desc: "The CLTR experience taken up a notch. Includes your adult cut with wash and hot towel treatment, an express facial cleanse to refresh your skin, and a buff and shine for your nails.", price: "R600", duration: "100 min" },
-  { name: "Luxurious Razor Bald Cut", desc: "A sharp, smooth razor finish paired with premium self-care. Includes your bald razor cut with wash and hot towel treatment, an express facial, and a buff and shine for your nails to complete the look.", price: "R650", duration: "100 min" },
-]
+// Hero video: one file per form factor, chosen on the client so a phone never
+// downloads the desktop cut (and vice versa). Reduced-motion visitors get the
+// still poster.
+const HERO = {
+  desktop: { src: '/media/hero-desktop.mp4', poster: '/media/hero-desktop-poster.jpg' },
+  mobile: { src: '/media/hero-mobile.mp4', poster: '/media/hero-mobile-poster.jpg' },
+}
 
-const ADDON = [
-  { name: "Bleach", desc: "Lighten things up with a professional service, done carefully to give you a bold look.", price: "From R150", duration: "45 min" },
-  { name: "Colour", desc: "Add some colour and personality to your style. Whether it's a subtle or a bold change, tailored for you.", price: "From R250", duration: "100 min" },
-]
-
-const imgError = (e) => {
+const imgError = (e: React.SyntheticEvent<HTMLImageElement>) => {
   const img = e.currentTarget
   if (!img.dataset.retried) {
     img.dataset.retried = 'true'
@@ -47,30 +42,42 @@ const imgError = (e) => {
   }
 }
 
-function TribalDivider() {
+function HeroVideo() {
+  const ref = useRef<HTMLVideoElement>(null)
+  const [poster, setPoster] = useState(HERO.desktop.poster)
+
+  useEffect(() => {
+    const video = ref.current
+    if (!video) return
+    const isMobile = window.matchMedia('(max-width: 767px)').matches
+    const pick = isMobile ? HERO.mobile : HERO.desktop
+    setPoster(pick.poster)
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    video.src = pick.src
+    video.play().catch(() => { /* autoplay refused: the poster stays */ })
+  }, [])
+
   return (
-    <div className="flex items-center justify-center gap-1.5 py-1" aria-hidden="true">
-      {Array.from({ length: 9 }).map((_, i) => (
-        <span key={i} className="w-2 h-2 rotate-45 border border-[#b87333]/60" />
-      ))}
-    </div>
+    <video
+      ref={ref}
+      poster={poster}
+      muted
+      loop
+      playsInline
+      autoPlay
+      preload="metadata"
+      aria-hidden="true"
+      className="absolute inset-0 h-full w-full object-cover object-[60%_center]"
+    />
   )
 }
 
-function ServiceRow({ s }) {
+function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-4 py-4 border-b border-zinc-800 last:border-0">
-      <div className="flex-1">
-        <h4 className="font-semibold text-zinc-100" style={{ fontFamily: "'Poppins', sans-serif" }}>{s.name}</h4>
-        <p className="text-sm text-zinc-400 mt-1 leading-relaxed max-w-xl">{s.desc}</p>
-        <div className="flex items-center gap-1.5 mt-2 text-xs text-zinc-500">
-          <Clock className="w-3.5 h-3.5" />{s.duration}
-        </div>
-      </div>
-      <div className="shrink-0 text-right">
-        <span className="text-xl font-bold text-[#c87a3f]" style={{ fontFamily: "'Anton', sans-serif" }}>{s.price}</span>
-      </div>
-    </div>
+    <p data-kizuri-edit="194pjh6" className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.35em] text-copper-light">
+      <span data-kizuri-edit="1g5nwyn" aria-hidden="true" className="h-px w-8 bg-copper" />
+      {children}
+    </p>
   )
 }
 
@@ -79,217 +86,231 @@ export default function CltrBarbershop() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    if (!document.querySelector('link[data-kodee-font]')) {
-      const link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.dataset.kodeeFont = 'true'
-      link.href = 'https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700&display=swap'
-      document.head.appendChild(link)
-    }
-    const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', onScroll)
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
+
   return (
-    <div className="min-h-screen bg-[#0d0f12] text-zinc-200" style={{ fontFamily: "'Poppins', sans-serif" }}>
+    <div data-kizuri-edit="145idqc" className={`${anton.variable} ${poppins.variable} cltr min-h-screen bg-obsidian font-body text-silver antialiased`}>
       {/* NAVBAR */}
-      <header className={`fixed top-0 inset-x-0 z-50 transition-colors ${scrolled ? 'bg-[#0d0f12]/90 backdrop-blur border-b border-zinc-800' : 'bg-transparent'}`}>
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <a href="#home" className="flex items-center gap-2.5">
-            <img src={LOGO} alt="BANTU CLTR" onError={imgError} className="w-10 h-10 rounded-full object-cover" />
-            <span className="text-lg tracking-widest text-zinc-100" style={{ fontFamily: "'Anton', sans-serif" }}>BANTU CLTR</span>
+      <header data-kizuri-section="1xx8uns" data-kizuri-edit="1xx8uns" className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${scrolled ? 'border-b border-white/10 bg-obsidian/85 backdrop-blur-md' : 'bg-gradient-to-b from-black/60 to-transparent'}`}>
+        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6">
+          <a data-kizuri-edit="oizs8s" href="#home" className="flex items-center gap-3" aria-label="CLTR home">
+            <img data-kizuri-edit="16ts2b8" src={LOGO} alt="BANTU CLTR logo" onError={imgError} className="h-10 w-10 rounded-full object-cover ring-1 ring-copper/50" />
+            <span data-kizuri-edit="1vx9ous" className="font-display text-xl tracking-[0.2em] text-white">CLTR</span>
           </a>
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden items-center gap-8 md:flex">
             {NAV_ITEMS.map((item, i) => (
-              <a key={i} data-kizuri-nav-item={String(i)} href={item.href}
-                className="text-sm tracking-wide text-zinc-400 hover:text-[#c87a3f] transition-colors">{item.label}</a>
+              <a data-kizuri-edit="wzna1e" key={i} data-kizuri-nav-item={String(i)} href={item.href}
+                className="text-sm tracking-wide text-silver/80 transition-colors hover:text-copper-light">{item.label}</a>
             ))}
-            <a href="#book">
-              <Button className="bg-[#b87333] hover:bg-[#c87a3f] text-zinc-950 font-semibold rounded-lg">Book a chair</Button>
+            <a data-kizuri-edit="oiztxa" href="#book" className="cltr-btn-primary px-5 py-2.5 text-sm">
+              <span data-kizuri-edit="zojlmb">Book a chair</span>
             </a>
           </div>
-          <button className="md:hidden text-zinc-200 p-2" onClick={() => setMenuOpen(true)} aria-label="Open menu">
-            <Menu className="w-6 h-6" />
+          <button data-kizuri-edit="13j3nyq" className="-mr-2 p-2 text-white md:hidden" onClick={() => setMenuOpen(true)} aria-label="Open menu">
+            <Menu data-kizuri-edit="r0ktuh" data-kizuri-kind="icon" className="h-6 w-6" />
           </button>
         </nav>
       </header>
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="fixed inset-0 z-[60] bg-[#0d0f12] md:hidden flex flex-col">
-          <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-800">
-            <span className="text-lg tracking-widest text-zinc-100" style={{ fontFamily: "'Anton', sans-serif" }}>BANTU CLTR</span>
-            <button onClick={() => setMenuOpen(false)} className="p-2 text-zinc-200" aria-label="Close menu"><X className="w-6 h-6" /></button>
+        <div data-kizuri-edit="3d375t" className="fixed inset-0 z-[60] flex flex-col bg-obsidian md:hidden">
+          <div data-kizuri-edit="3d3802" className="flex h-16 items-center justify-between border-b border-white/10 px-4">
+            <span data-kizuri-edit="13lyx06" className="font-display text-xl tracking-[0.2em] text-white">CLTR</span>
+            <button data-kizuri-edit="13j3osz" onClick={() => setMenuOpen(false)} className="-mr-2 p-2 text-white" aria-label="Close menu"><X data-kizuri-edit="1ab9u82" data-kizuri-kind="icon" className="h-6 w-6" /></button>
           </div>
-          <div className="flex flex-col p-6 gap-5">
+          <div className="flex flex-1 flex-col gap-2 p-6">
             {NAV_ITEMS.map((item, i) => (
-              <a key={i} data-kizuri-nav-item={String(i)} href={item.href} onClick={() => setMenuOpen(false)}
-                className="text-2xl tracking-wide text-zinc-300 hover:text-[#c87a3f]" style={{ fontFamily: "'Anton', sans-serif" }}>{item.label}</a>
+              <a data-kizuri-edit="1gkfitw" key={i} data-kizuri-nav-item={String(i)} href={item.href} onClick={() => setMenuOpen(false)}
+                className="border-b border-white/5 py-3 font-display text-4xl tracking-wide text-white transition-colors hover:text-copper-light">{item.label}</a>
             ))}
-            <a href="#book" onClick={() => setMenuOpen(false)} className="mt-4">
-              <Button className="w-full bg-[#b87333] hover:bg-[#c87a3f] text-zinc-950 font-semibold rounded-lg">Book a chair</Button>
+            <a data-kizuri-edit="oizvls" href="#book" onClick={() => setMenuOpen(false)} className="cltr-btn-primary mt-auto w-full py-4 text-base">
+              <span data-kizuri-edit="1j9buet">Book a chair</span>
             </a>
           </div>
         </div>
       )}
 
-      {/* HERO */}
-      <section id="home" className="relative min-h-[100svh] flex items-center">
-        <img
-          src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=1600&q=80"
-          alt="Barber at work in the chair"
-          onError={imgError}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0d0f12] via-[#0d0f12]/80 to-[#0d0f12]/30" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full pt-20">
-          <div className="max-w-2xl">
-            <TribalDivider />
-            <p className="text-[#c87a3f] text-xs tracking-[0.35em] uppercase mb-4">Est. 1997 · Florida Road, Durban</p>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl leading-[0.92] text-zinc-50" style={{ fontFamily: "'Anton', sans-serif" }}>
-              SHARP CUTS.<br />ROOTED IN<br /><span className="text-[#c87a3f]">CULTURE.</span>
-            </h1>
-            <p className="mt-6 text-zinc-300 text-base sm:text-lg max-w-md leading-relaxed">
-              Fades, razors and beard work done right — wash, hot towel and all. Off Florida Road, where the chair's always warm.
-            </p>
-            <a href="#book">
-              <Button size="lg" className="mt-8 bg-[#b87333] hover:bg-[#c87a3f] text-zinc-950 font-bold text-base px-8 rounded-lg">
-                Book a chair <ChevronRight className="w-5 h-5 ml-1" />
-              </Button>
+      <main>
+        {/* HERO */}
+        <section data-kizuri-section="56ug6c" data-kizuri-edit="56ug6c" id="home" className="relative flex min-h-[100svh] items-end overflow-hidden">
+          <HeroVideo />
+          <div data-kizuri-edit="3d38ub" aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/55 to-black/30" />
+          <div data-kizuri-edit="3d39ok" aria-hidden="true" className="absolute inset-0 hidden bg-gradient-to-r from-obsidian/90 via-obsidian/40 to-transparent md:block" />
+          <div aria-hidden="true" className="cltr-grain absolute inset-0" />
+
+          <div className="relative mx-auto w-full max-w-7xl px-4 pb-14 pt-32 sm:px-6 sm:pb-20">
+            <div className="max-w-2xl cltr-rise">
+              <Eyebrow>Florida Road, Durban</Eyebrow>
+              <h1 data-kizuri-edit="132bum0" className="mt-5 font-display text-[22vw] leading-[0.82] tracking-tight text-white sm:text-[11rem] lg:text-[13rem]">
+                CUT<span data-kizuri-edit="1fzed75" className="text-copper">.</span>
+              </h1>
+              <p data-kizuri-edit="1t9x2t0" className="mt-6 max-w-lg text-base leading-relaxed text-silver/90 sm:text-lg">
+                A barber&apos;s chair is where a neighbourhood tells its stories. CLTR is a Durban grooming house built on the blade, the conversation, and the craft passed on.
+              </p>
+              <div className="mt-9 flex flex-wrap items-center gap-3">
+                <a data-kizuri-edit="oizwg1" href="#book" className="cltr-btn-primary group px-7 py-4 text-base">
+                  <span data-kizuri-edit="lqfc7e">Book Your Cut</span>
+                  <ArrowRight data-kizuri-edit="1r1ddpx" data-kizuri-kind="icon" aria-hidden="true" className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </a>
+                <a data-kizuri-edit="oizxaa" href="#services" className="cltr-btn-ghost px-7 py-4 text-base">
+                  <span data-kizuri-edit="zt939k">See prices</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* TICKER */}
+        <section data-kizuri-section="56uh0l" data-kizuri-edit="56uh0l" aria-label="What we do" className="overflow-hidden border-y border-copper/30 bg-copper py-3 text-obsidian">
+          <div className="cltr-marquee flex w-max gap-10 whitespace-nowrap font-display text-xl uppercase tracking-[0.15em] sm:text-2xl">
+            {[...TICKER, ...TICKER].map((word, i) => (
+              <span data-kizuri-edit="5g186y" key={i} aria-hidden={i >= TICKER.length} className="flex items-center gap-10">
+                {word}<span data-kizuri-edit="1ljemrr" aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-obsidian/60" />
+              </span>
+            ))}
+          </div>
+        </section>
+
+        {/* SERVICES */}
+        <section data-kizuri-section="56uhuu" data-kizuri-edit="56uhuu" id="services" className="relative py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="grid gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+              <div className="lg:sticky lg:top-28 lg:self-start">
+                <Eyebrow>The price list</Eyebrow>
+                <h2 data-kizuri-edit="1dswi72" className="mt-5 font-display text-5xl leading-[0.95] text-white sm:text-6xl">THE PRICE LIST</h2>
+                <p data-kizuri-edit="1vkgonr" className="mt-5 max-w-md text-base leading-relaxed text-silver/75">
+                  Every cut, laid out plain — Three tiers built for however you want to walk out the door.
+                </p>
+                <p data-kizuri-edit="1pwhipv" className="mt-6 max-w-md text-sm leading-relaxed text-silver/55">
+                  Tap Book on any service to jump straight to an open slot.
+                </p>
+              </div>
+              <div data-kizuri-shop="price-list" className="cltr-price-list"></div>
+            </div>
+          </div>
+        </section>
+
+        {/* GALLERY */}
+        <section data-kizuri-section="56uip3" data-kizuri-edit="56uip3" id="gallery" className="border-t border-white/5 bg-obsidian-2 py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="mb-10 flex flex-wrap items-end justify-between gap-6 sm:mb-14">
+              <div>
+                <Eyebrow>From the chair</Eyebrow>
+                <h2 data-kizuri-edit="kofmqb" className="mt-5 font-display text-5xl leading-[0.95] text-white sm:text-6xl">THE WORK</h2>
+              </div>
+              <a data-kizuri-edit="oizy4j" href={WHATSAPP} className="inline-flex items-center gap-2 text-sm font-medium text-copper-light transition-colors hover:text-white">
+                <span data-kizuri-edit="1nbpooy">Send us your reference cut</span>
+                <ArrowUpRight data-kizuri-edit="p6bftw" data-kizuri-kind="icon" aria-hidden="true" className="h-4 w-4" />
+              </a>
+            </div>
+            <div className="grid auto-rows-[180px] grid-cols-2 gap-3 sm:auto-rows-[240px] sm:gap-4 md:grid-cols-4">
+              <div className="cltr-tile col-span-2 row-span-2">
+                <img data-kizuri-edit="oyxtu7" src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1000&q=80" alt="Fresh fade" onError={imgError} loading="lazy" />
+              </div>
+              <div className="cltr-tile">
+                <img data-kizuri-edit="biuchu" src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&q=80" alt="Beard trim" onError={imgError} loading="lazy" />
+              </div>
+              <div className="cltr-tile row-span-2">
+                <img data-kizuri-edit="cm9605" src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&q=80" alt="Razor line up" onError={imgError} loading="lazy" />
+              </div>
+              <div className="cltr-tile">
+                <img data-kizuri-edit="12s9lb1" src="https://images.unsplash.com/photo-1512690459411-b9245aed614b?w=600&q=80" alt="Clean bald razor finish" onError={imgError} loading="lazy" />
+              </div>
+              <div className="cltr-tile col-span-2 md:col-span-1">
+                <img data-kizuri-edit="1dl4e8l" src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=800&q=80" alt="Inside the shop" onError={imgError} loading="lazy" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* BOOKING */}
+        <section data-kizuri-section="56ujjc" data-kizuri-edit="56ujjc" id="book" className="relative py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="grid gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+              <div>
+                <Eyebrow>Book online</Eyebrow>
+                <h2 data-kizuri-edit="1aymxbr" className="mt-5 font-display text-5xl leading-[0.95] text-white sm:text-6xl">BOOK YOUR SEAT</h2>
+                <p data-kizuri-edit="ze7p1h" className="mt-5 max-w-md text-base leading-relaxed text-silver/75">Pick a service, choose a time, lock it in. We&apos;ll be ready.</p>
+                <ol className="mt-10 space-y-6">
+                  {[
+                    ['01', 'Pick your service', 'Prime, Lux or an add-on — prices are right here.'],
+                    ['02', 'Choose a time', 'Only open slots show, so what you see is free.'],
+                    ['03', 'Pay and pull up', 'Pay securely online and your slot is confirmed.'],
+                  ].map(([n, title, body]) => (
+                    <li data-kizuri-edit="1eo0d0k" key={n} className="flex gap-5">
+                      <span data-kizuri-edit="144lzx2" className="font-display text-3xl leading-none text-copper">{n}</span>
+                      <div>
+                        <h3 data-kizuri-edit="2fmld6" className="font-semibold text-white">{title}</h3>
+                        <p data-kizuri-edit="1ff1wh1" className="mt-1 text-sm text-silver/60">{body}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <div className="cltr-booking">
+                <div data-kizuri-shop="booking"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section data-kizuri-section="56ukdl" data-kizuri-edit="56ukdl" className="relative overflow-hidden border-y border-white/5 bg-obsidian-2">
+          <div aria-hidden="true" className="cltr-glow absolute inset-0" />
+          <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-8 px-4 py-16 sm:px-6 md:flex-row md:items-center md:justify-between md:py-20">
+            <h2 data-kizuri-edit="1j44zk9" className="font-display text-4xl leading-[0.95] text-white sm:text-6xl">PULL UP A CHAIR.</h2>
+            <a data-kizuri-edit="oizyys" href={WHATSAPP} className="cltr-btn-primary px-7 py-4 text-base">
+              <MessageCircle data-kizuri-edit="1il85tr" data-kizuri-kind="icon" aria-hidden="true" className="h-5 w-5" />
+              <span data-kizuri-edit="lyycap">WhatsApp us</span>
             </a>
           </div>
-        </div>
-      </section>
-
-      {/* SERVICES */}
-      <section id="services" className="py-14 sm:py-20 bg-[#0d0f12]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10">
-            <TribalDivider />
-            <h2 className="text-3xl sm:text-4xl text-zinc-50 mt-2" style={{ fontFamily: "'Anton', sans-serif" }}>THE PRICE LIST</h2>
-            <p className="text-zinc-400 mt-3 max-w-md mx-auto">Three tiers. Every cut includes the full CLTR treatment — pick your lane.</p>
-          </div>
-
-          <Accordion type="single" collapsible defaultValue="prime" className="space-y-3">
-            <AccordionItem value="prime" className="border border-zinc-800 rounded-xl bg-zinc-900/40 px-5">
-              <AccordionTrigger className="hover:no-underline py-5">
-                <div className="flex items-center gap-3 text-left">
-                  <Scissors className="w-5 h-5 text-[#c87a3f]" />
-                  <div>
-                    <span className="text-xl text-zinc-50 block" style={{ fontFamily: "'Anton', sans-serif" }}>CLTR PRIME</span>
-                    <span className="text-xs text-zinc-500 font-normal">Everyday cuts, done properly</span>
-                  </div>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pb-4">
-                {PRIME.map((s, i) => <ServiceRow key={i} s={s} />)}
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="lux" className="border border-zinc-800 rounded-xl bg-zinc-900/40 px-5">
-              <AccordionTrigger className="hover:no-underline py-5">
-                <div className="flex items-center gap-3 text-left">
-                  <Scissors className="w-5 h-5 text-[#c87a3f]" />
-                  <div>
-                    <span className="text-xl text-zinc-50 block" style={{ fontFamily: "'Anton', sans-serif" }}>CLTR LUX</span>
-                    <span className="text-xs text-zinc-500 font-normal">The full self-care sit-down</span>
-                  </div>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pb-4">
-                {LUX.map((s, i) => <ServiceRow key={i} s={s} />)}
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="addon" className="border border-zinc-800 rounded-xl bg-zinc-900/40 px-5">
-              <AccordionTrigger className="hover:no-underline py-5">
-                <div className="flex items-center gap-3 text-left">
-                  <Scissors className="w-5 h-5 text-[#c87a3f]" />
-                  <div>
-                    <span className="text-xl text-zinc-50 block" style={{ fontFamily: "'Anton', sans-serif" }}>CLTR ADD-ON</span>
-                    <span className="text-xs text-zinc-500 font-normal">Colour & bleach, your call</span>
-                  </div>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pb-4">
-                {ADDON.map((s, i) => <ServiceRow key={i} s={s} />)}
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </div>
-      </section>
-
-      {/* GALLERY */}
-      <section id="gallery" className="py-14 sm:py-20 bg-zinc-900/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10">
-            <TribalDivider />
-            <h2 className="text-3xl sm:text-4xl text-zinc-50 mt-2" style={{ fontFamily: "'Anton', sans-serif" }}>THE WORK</h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-            <div className="row-span-2 overflow-hidden rounded-xl bg-zinc-800">
-              <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&q=80" alt="Fresh fade" onError={imgError} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-            </div>
-            <div className="overflow-hidden rounded-xl bg-zinc-800 aspect-square">
-              <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&q=80" alt="Beard trim" onError={imgError} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-            </div>
-            <div className="overflow-hidden rounded-xl bg-zinc-800 aspect-square">
-              <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&q=80" alt="Razor line up" onError={imgError} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-            </div>
-            <div className="overflow-hidden rounded-xl bg-zinc-800 aspect-square">
-              <img src="https://images.unsplash.com/photo-1512690459411-b9245aed614b?w=600&q=80" alt="Clean bald razor finish" onError={imgError} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-            </div>
-            <div className="overflow-hidden rounded-xl bg-zinc-800 aspect-square">
-              <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&q=80" alt="Inside the shop" onError={imgError} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* BOOKING */}
-      <section id="book" className="py-14 sm:py-20 bg-[#0d0f12]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-8">
-            <TribalDivider />
-            <h2 className="text-3xl sm:text-4xl text-zinc-50 mt-2" style={{ fontFamily: "'Anton', sans-serif" }}>BOOK YOUR SEAT</h2>
-            <p className="text-zinc-400 mt-3 max-w-md mx-auto">Pick a service, choose a time, lock it in. We'll be ready.</p>
-          </div>
-          <div data-kizuri-shop="booking"></div>
-        </div>
-      </section>
+        </section>
+      </main>
 
       {/* VISIT / FOOTER */}
-      <footer id="visit" className="bg-zinc-950 border-t border-zinc-800 pt-14 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid gap-10 md:grid-cols-3">
+      <footer data-kizuri-section="gnlftq" data-kizuri-edit="gnlftq" id="visit" className="bg-black pb-8 pt-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="grid gap-12 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
             <div>
-              <div className="flex items-center gap-2.5 mb-4">
-                <img src={LOGO} alt="BANTU CLTR" onError={imgError} className="w-11 h-11 rounded-full object-cover" />
-                <span className="text-xl tracking-widest text-zinc-100" style={{ fontFamily: "'Anton', sans-serif" }}>BANTU CLTR</span>
+              <div className="flex items-center gap-3">
+                <img data-kizuri-edit="16ts7cq" src={LOGO} alt="BANTU CLTR logo" onError={imgError} className="h-12 w-12 rounded-full object-cover ring-1 ring-copper/50" />
+                <span data-kizuri-edit="1eiwym9" className="font-display text-2xl tracking-[0.2em] text-white">BANTU CLTR</span>
               </div>
-              <p className="text-sm text-zinc-500 leading-relaxed max-w-xs">Sharp cuts rooted in culture. Serving Durban from Florida Road since 1997.</p>
+              <p data-kizuri-edit="wnc9vp" className="mt-5 max-w-sm text-sm leading-relaxed text-silver/55">Sharp cuts rooted in culture. Serving Durban from Florida Road since 1997.</p>
             </div>
             <div>
-              <h3 className="text-sm tracking-[0.25em] uppercase text-[#c87a3f] mb-4">Find Us</h3>
-              <div className="flex items-start gap-2.5 text-sm text-zinc-400">
-                <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-zinc-500" />
-                <span>233 Florida Road, Durban</span>
-              </div>
+              <h3 data-kizuri-edit="10kv16" className="text-xs font-semibold uppercase tracking-[0.3em] text-copper-light">Find us</h3>
+              <a data-kizuri-edit="oizzt1" href={MAPS} target="_blank" rel="noopener noreferrer" className="mt-5 flex items-start gap-3 text-sm text-silver/75 transition-colors hover:text-white">
+                <MapPin data-kizuri-edit="1s2zux5" data-kizuri-kind="icon" aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-copper" />
+                <span data-kizuri-edit="vkbem2">233 Florida Road, Durban</span>
+              </a>
             </div>
             <div>
-              <h3 className="text-sm tracking-[0.25em] uppercase text-[#c87a3f] mb-4">Reach Us</h3>
-              <a href="https://wa.me/27783562462" className="flex items-center gap-2.5 text-sm text-zinc-400 hover:text-[#c87a3f] transition-colors mb-3">
-                <MessageCircle className="w-4 h-4 shrink-0" /> WhatsApp: +27 78 356 2462
+              <h3 data-kizuri-edit="1h18vrx" className="text-xs font-semibold uppercase tracking-[0.3em] text-copper-light">Reach us</h3>
+              <a data-kizuri-edit="s2k165" href={WHATSAPP} className="mt-5 flex items-center gap-3 text-sm text-silver/75 transition-colors hover:text-white">
+                <MessageCircle data-kizuri-edit="1lz5y00" data-kizuri-kind="icon" aria-hidden="true" className="h-4 w-4 shrink-0 text-copper" />
+                <span data-kizuri-edit="1yenhmb">WhatsApp: +27 78 356 2462</span>
               </a>
-              <a href="mailto:jordy@cltr.co.za" className="flex items-center gap-2.5 text-sm text-zinc-400 hover:text-[#c87a3f] transition-colors">
-                <Mail className="w-4 h-4 shrink-0" /> jordy@cltr.co.za
+              <a data-kizuri-edit="s2k20e" href="mailto:jordy@cltr.co.za" className="mt-3 flex items-center gap-3 text-sm text-silver/75 transition-colors hover:text-white">
+                <Mail data-kizuri-edit="18fe91f" data-kizuri-kind="icon" aria-hidden="true" className="h-4 w-4 shrink-0 text-copper" />
+                <span data-kizuri-edit="158p8aj">jordy@cltr.co.za</span>
               </a>
-              <p className="text-xs text-zinc-600 mt-3">WhatsApp only — no calls, please.</p>
+              <p data-kizuri-edit="1u6xnmz" className="mt-4 text-xs text-silver/40">WhatsApp only — no calls, please.</p>
             </div>
           </div>
-          <TribalDivider />
-          <p className="text-center text-xs text-zinc-600 mt-4">© {new Date().getFullYear()} BANTU CLTR · 233 Florida Road, Durban</p>
+          <div data-kizuri-edit="3d3ait" className="mt-14 border-t border-white/10 pt-6 text-xs text-silver/40">
+            <p data-kizuri-edit="1ej68f3">© {new Date().getFullYear()} BANTU CLTR · 233 Florida Road, Durban</p>
+          </div>
         </div>
       </footer>
     </div>

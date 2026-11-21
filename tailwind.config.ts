@@ -8,7 +8,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        display: ["var(--font-anton)", "Anton", "Impact", "sans-serif"],
+        body: ["var(--font-poppins)", "Poppins", "system-ui", "sans-serif"],
+      },
       colors: {
+        // CLTR brand: obsidian slate, frozen silver, raw copper.
+        obsidian: { DEFAULT: "#0d0f12", 2: "#13161b" },
+        silver: "#d9dde3",
+        copper: { DEFAULT: "#b87333", light: "#d89257" },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
