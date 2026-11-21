@@ -1,9 +1,29 @@
 import type { Metadata } from 'next'
 import './globals.css'
 
+const title = 'BANTU CLTR | Barbershop on Florida Road, Durban'
+const description =
+  'Sharp cuts rooted in culture. BANTU CLTR has been cutting on 233 Florida Road, Durban since 1997. See our prices and book your cut online.'
+
 export const metadata: Metadata = {
-  title: "BANTU CLTR",
-  description: 'UI component generated with Kizuri AI',
+  metadataBase: new URL('https://cltr.co.za'),
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    url: 'https://cltr.co.za',
+    siteName: 'BANTU CLTR',
+    locale: 'en_ZA',
+    type: 'website',
+    images: [{ url: '/media/hero-desktop-poster.jpg', alt: 'BANTU CLTR barbershop, Durban' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title,
+    description,
+    images: ['/media/hero-desktop-poster.jpg'],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
