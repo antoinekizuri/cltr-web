@@ -232,7 +232,7 @@
   // phone, /checkout, kz_ev_cart_ prefix). Exposes the events-owned
   // window.__kizuriEventsCheckout (per-vertical name — never clobber the shop's).
 (function(){
-  var CHECKOUT_STYLES = "\n.kz-checkout-cart-toggle{position:fixed;bottom:20px;right:20px;z-index:2147483000;border:0;border-radius:999px;padding:14px 20px;background:#111;background:var(--kz-accent,#111);color:#fff;color:var(--kz-accent-contrast,#fff);cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.25);font:inherit;font-weight:600;font-size:14px;}\n.kz-checkout-cart{position:fixed;top:0;right:0;bottom:0;width:400px;max-width:92vw;z-index:2147483001;background:#fff;color:#111;box-shadow:-8px 0 40px rgba(0,0,0,.25);display:flex;flex-direction:column;padding:20px;overflow:auto;font:inherit;}\n.kz-checkout-cart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}\n.kz-checkout-cart-head strong{font-size:18px;color:#111;}\n.kz-checkout-cart-close{cursor:pointer;border:0;background:transparent;color:#111;font:inherit;font-size:14px;opacity:.6;}\n.kz-checkout-cart-close:hover{opacity:1;}\n.kz-checkout-cart-item{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #eee;}\n.kz-checkout-cart-item-name{flex:1;font-size:14px;color:#111;}\n.kz-checkout-cart-item-price{font-weight:600;font-size:14px;color:#111;}\n.kz-checkout-cart-qty{width:60px;padding:6px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;color:#111;}\n.kz-checkout-cart-remove{cursor:pointer;border:0;background:transparent;color:#111;opacity:.55;font:inherit;font-size:13px;}\n.kz-checkout-cart-remove:hover{opacity:1;}\n.kz-checkout-cart-subtotal{font-weight:700;font-size:16px;margin:14px 0;color:#111;}\n.kz-checkout-checkout-btn{padding:13px;border:0;border-radius:10px;background:#111;background:var(--kz-accent,#111);color:#fff;color:var(--kz-accent-contrast,#fff);cursor:pointer;font:inherit;font-weight:600;font-size:15px;width:100%;}\n.kz-checkout-checkout{display:flex;flex-direction:column;gap:10px;margin-top:12px;}\n.kz-checkout-checkout input{padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;font-size:14px;color:#111;background:#fff;width:100%;}\n.kz-checkout-pay{padding:13px;border:0;border-radius:10px;background:#111;background:var(--kz-accent,#111);color:#fff;color:var(--kz-accent-contrast,#fff);cursor:pointer;font:inherit;font-weight:600;font-size:15px;}\n.kz-checkout-empty{opacity:.7;padding:24px;text-align:center;color:#111;}\n.kz-checkout-cart-msg{padding:11px;border-radius:8px;background:#f1f5f9;color:#111;margin:10px 0;font-size:13px;}\n";
+  var CHECKOUT_STYLES = "\n.kz-checkout-cart-toggle{position:fixed;bottom:20px;right:20px;z-index:2147483000;border:0;border-radius:999px;padding:14px 20px;background:#111;background:var(--kz-accent,#111);color:#fff;color:var(--kz-accent-contrast,#fff);cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.25);font:inherit;font-weight:600;font-size:14px;}\n.kz-checkout-cart{position:fixed;top:0;right:0;bottom:0;width:400px;max-width:92vw;z-index:2147483001;background:#fff;color:#111;box-shadow:-8px 0 40px rgba(0,0,0,.25);display:flex;flex-direction:column;padding:20px;overflow:auto;font:inherit;}\n.kz-checkout-cart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}\n.kz-checkout-cart-head strong{font-size:18px;color:#111;}\n.kz-checkout-cart-close{cursor:pointer;border:0;background:transparent;color:#111;font:inherit;font-size:14px;opacity:.6;}\n.kz-checkout-cart-close:hover{opacity:1;}\n.kz-checkout-cart-item{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #eee;}\n.kz-checkout-cart-item-name{flex:1;font-size:14px;color:#111;}\n.kz-checkout-cart-item-price{font-weight:600;font-size:14px;color:#111;}\n.kz-checkout-cart-qty{width:60px;padding:6px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;color:#111;}\n.kz-checkout-cart-remove{cursor:pointer;border:0;background:transparent;color:#111;opacity:.55;font:inherit;font-size:13px;}\n.kz-checkout-cart-remove:hover{opacity:1;}\n.kz-checkout-cart-subtotal{font-weight:700;font-size:16px;margin:14px 0;color:#111;}\n.kz-checkout-checkout-btn{padding:13px;border:0;border-radius:10px;background:#111;background:var(--kz-accent,#111);color:#fff;color:var(--kz-accent-contrast,#fff);cursor:pointer;font:inherit;font-weight:600;font-size:15px;width:100%;}\n.kz-checkout-checkout{display:flex;flex-direction:column;gap:10px;margin-top:12px;}\n.kz-checkout-checkout input{padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;font-size:14px;color:#111;background:#fff;width:100%;}\n.kz-checkout-pay{padding:13px;border:0;border-radius:10px;background:#111;background:var(--kz-accent,#111);color:#fff;color:var(--kz-accent-contrast,#fff);cursor:pointer;font:inherit;font-weight:600;font-size:15px;}\n.kz-checkout-empty{opacity:.7;padding:24px;text-align:center;color:#111;}\n.kz-checkout-cart-msg{padding:11px;border-radius:8px;background:#f1f5f9;color:#111;margin:10px 0;font-size:13px;}\n\n.kz-checkout-terms{display:flex;align-items:flex-start;gap:10px;margin:2px 0 12px;font-size:14px;line-height:1.45;cursor:pointer;text-align:left;}\n.kz-checkout-terms input{flex:none;width:18px !important;height:18px;margin:1px 0 0;padding:0;accent-color:currentColor;cursor:pointer;}\n.kz-checkout-terms a{color:inherit;text-decoration:underline;text-underline-offset:3px;}\n";
   function injectCheckoutStyles(){
     try{
       if(document.querySelector('style[data-kizuri-checkout-styles]'))return;
@@ -245,6 +245,54 @@
 
   function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
   function escAttr(s){return escHtml(s).replace(/"/g,'&quot;');}
+
+  // ── Terms & Conditions (terms-core) ──
+  var _kzTermsUrl=null, _kzTermsLoaded=false, _kzTermsForms=[];
+  function kzTermsSettingsUrl(){
+    // {api}/api/<vertical>/<siteId> → {api}/api/site-settings/<siteId>
+    return String(STOREFRONT_URL).replace(/\/api\/[a-z-]+\/[^\/?#]+\/?$/,'')+'/api/site-settings/'+encodeURIComponent(SITE_ID);
+  }
+  function kzTermsInject(form){
+    if(!form)return;
+    // Forget forms that were redrawn away (carts re-render on every change).
+    var live=[];for(var f=0;f<_kzTermsForms.length;f++){if(_kzTermsForms[f].isConnected!==false)live.push(_kzTermsForms[f]);}
+    _kzTermsForms=live;
+    if(_kzTermsForms.indexOf(form)<0)_kzTermsForms.push(form);
+    if(!_kzTermsUrl||form.querySelector('.'+"kz-checkout-terms"))return;
+    var d=form.ownerDocument||document;
+    var label=d.createElement('label'); label.className="kz-checkout-terms";
+    var box=d.createElement('input'); box.type='checkbox'; box.name='kz_accept_terms'; box.setAttribute('aria-required','true');
+    var text=d.createElement('span'); text.appendChild(d.createTextNode('I agree to the '));
+    var link=d.createElement('a'); link.href=_kzTermsUrl; link.target='_blank'; link.rel='noopener'; link.textContent='Terms & Conditions';
+    text.appendChild(link);
+    label.appendChild(box); label.appendChild(text);
+    var pay=form.querySelector('button[type="submit"]');
+    if(pay&&pay.parentNode===form)form.insertBefore(label,pay);else form.appendChild(label);
+  }
+  function kzTermsLoad(){
+    if(_kzTermsLoaded)return;
+    _kzTermsLoaded=true;
+    try{
+      fetch(kzTermsSettingsUrl(),{headers:{'Accept':'application/json'}})
+        .then(function(r){return r.ok?r.json():{};})
+        .then(function(s){
+          var u=s&&s.terms_pdf_url;
+          _kzTermsUrl=(typeof u==='string'&&/^https?:\/\//i.test(u))?u:null;
+          // Forms drawn before the settings arrived get their checkbox now.
+          for(var i=0;i<_kzTermsForms.length;i++)kzTermsInject(_kzTermsForms[i]);
+        })
+        .catch(function(){});
+    }catch(e){}
+  }
+  // {ok:false} = the site has T&Cs and the box isn't ticked: do not submit.
+  // accept is undefined when there is nothing to agree to (field left out).
+  function kzTermsCheck(form){
+    if(!_kzTermsUrl)return {ok:true,accept:undefined};
+    var box=form&&form.querySelector('[name="kz_accept_terms"]');
+    return box&&box.checked?{ok:true,accept:true}:{ok:false,accept:false};
+  }
+  var KZ_TERMS_MESSAGE='Please tick that you agree to the Terms & Conditions.';
+
   function fmt(cents){var sign=cents<0?'-':'';var a=Math.abs(Math.round(cents));var r=Math.floor(a/100);var c=(''+(a%100));while(c.length<2)c='0'+c;var g=(''+r).replace(/\B(?=(\d{3})+(?!\d))/g,',');return sign+'R'+g+'.'+c;}
 
   // ── cart storage (localStorage, keyed by site) ──
@@ -261,6 +309,7 @@
   var _toggleEl=null,_panelEl=null,_checkoutOpen=false,_checkingOut=false;
   function ensureCartUI(){
     if(_panelEl)return;
+    kzTermsLoad(); // first time a cart exists on this page: does the site have T&Cs?
     var d=document;
     _toggleEl=d.createElement('button');_toggleEl.type='button';_toggleEl.className='kz-checkout-cart-toggle';
     // Another vertical's toggle may already occupy bottom-right (shop and
@@ -312,7 +361,7 @@
     var cob=_panelEl.querySelector('.kz-checkout-checkout-btn');
     if(cob)cob.addEventListener('click',function(){_checkoutOpen=true;var f=_panelEl.querySelector('.kz-checkout-checkout');if(f)f.style.display='';});
     var form=_panelEl.querySelector('.kz-checkout-checkout');
-    if(form)form.addEventListener('submit',function(e){e.preventDefault();submitCheckout(form);});
+    if(form){kzTermsInject(form);form.addEventListener('submit',function(e){e.preventDefault();submitCheckout(form);});}
   }
   function val(form,name){var el=form.querySelector('[name="'+name+'"]');return el?(''+el.value).replace(/^\s+|\s+$/g,''):'';}
   var REQUIRED=["name","email"];
@@ -325,11 +374,14 @@
     var missing=false;
     for(var ri=0;ri<REQUIRED.length;ri++){if(!val(form,REQUIRED[ri])){missing=true;break;}}
     if(missing){setMsg("Please fill in the required fields.",'error');return;}
+    var terms=kzTermsCheck(form);
+    if(!terms.ok){setMsg(KZ_TERMS_MESSAGE,'error');return;}
     _checkingOut=true;
     var submitBtn=form.querySelector('button[type="submit"]');
     if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Processing…';}
     var customer={name:val(form,'name'),email:val(form,'email'),phone:val(form,'phone')};
     var payload={items:toCheckoutItems(cart),customer:customer};
+    if(terms.accept!==undefined)payload.accept_terms=terms.accept;
     if(HAS_ADDRESS){var address={};for(var ai=0;ai<ADDRESS_FIELDS.length;ai++){address[ADDRESS_FIELDS[ai]]=val(form,ADDRESS_FIELDS[ai]);}if(!address.country)address.country='South Africa';payload.address=address;}
     setMsg('Redirecting to payment...','');
     // Stamp which vertical started this checkout: both cores parse the SAME

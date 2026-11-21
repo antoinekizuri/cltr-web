@@ -27,7 +27,10 @@
     '.kz-bi-label{font-weight:600;min-width:92px;}',
     '.kz-bi-hours{margin-top:10px;}',
     '.kz-bi-socials{margin-top:10px;display:flex;flex-wrap:wrap;gap:12px;}',
-    '.kz-bi-socials a{text-decoration:underline;}'
+    '.kz-bi-socials a{text-decoration:underline;}',
+    '.kz-terms-footer{padding:14px 16px;text-align:center;font-size:13px;line-height:1.4;}',
+    '.kz-terms-footer a{color:inherit;opacity:.8;text-decoration:underline;text-underline-offset:3px;}',
+    '.kz-terms-footer a:hover{opacity:1;}'
   ].join('');
 
   function injectStyles(){
@@ -144,12 +147,49 @@
     }
   }
 
+  // ---- Terms & Conditions link ---------------------------------------------
+  // The merchant's T&Cs PDF (dashboard → Settings). A link the site already
+  // has ([data-kizuri-terms-link]) is pointed at it; otherwise one small link
+  // is added at the end of the footer, the page's last <footer>, or the page.
+  // No PDF → nothing is added and a site's own link keeps its own href.
+  function renderTermsLink(s){
+    var url=safeUrl(s&&s.terms_pdf_url);
+    var auto=document.querySelector('[data-kizuri-terms-link][data-kz-auto]');
+    if(!url){ if(auto&&auto.parentNode&&auto.parentNode.parentNode)auto.parentNode.parentNode.removeChild(auto.parentNode); return; }
+    var own=document.querySelectorAll('[data-kizuri-terms-link]:not([data-kz-auto])');
+    var i;
+    if(own.length){
+      for(i=0;i<own.length;i++){own[i].setAttribute('href',url);own[i].setAttribute('target','_blank');own[i].setAttribute('rel','noopener');}
+      return;
+    }
+    if(auto){ auto.setAttribute('href',url); return; }
+    var footers=document.querySelectorAll('footer');
+    var host=footers.length?footers[footers.length-1]:document.body;
+    if(!host)return;
+    var wrap=document.createElement('div'); wrap.className='kz-terms-footer';
+    var a=document.createElement('a');
+    a.setAttribute('data-kizuri-terms-link',''); a.setAttribute('data-kz-auto','');
+    a.href=url; a.target='_blank'; a.rel='noopener'; a.textContent='Terms & Conditions';
+    wrap.appendChild(a); host.appendChild(wrap);
+  }
+
+  // React hydration can replace the footer after this script ran, taking the
+  // link with it. Re-assert a few times while the page settles (idempotent).
+  var _termsTimers=false;
+  function keepTermsLink(s){
+    if(_termsTimers)return; _termsTimers=true;
+    var delays=[400,1200,2500,5000];
+    for(var i=0;i<delays.length;i++){setTimeout(function(){try{renderTermsLink(s);}catch(e){}},delays[i]);}
+  }
+
   // ---- boot ---------------------------------------------------------------
 
   function apply(s){
     injectStyles();
     renderAnnouncement(s);
     renderBusinessInfo(s);
+    renderTermsLink(s);
+    if(s&&safeUrl(s.terms_pdf_url))keepTermsLink(s);
   }
 
   // The ONE global this runtime owns. Never a shared name.
