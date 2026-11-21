@@ -151,8 +151,10 @@ export default function CltrBarbershop() {
           <div className="relative mx-auto w-full max-w-7xl px-4 pb-14 pt-32 sm:px-6 sm:pb-20">
             <div className="max-w-2xl cltr-rise">
               <Eyebrow>Florida Road, Durban</Eyebrow>
-              <h1 data-kizuri-edit="132bum0" className="mt-5 font-display text-[22vw] leading-[0.82] tracking-tight text-white sm:text-[11rem] lg:text-[13rem]">
-                CUT<span data-kizuri-edit="1fzed75" className="text-copper">.</span>
+              <h1 data-kizuri-edit="sthgx8" className="mt-5 font-display text-[22vw] uppercase leading-[0.86] tracking-tight text-white sm:text-[8.5rem] lg:text-[clamp(6.5rem,16vh,10rem)]">
+                <span data-kizuri-edit="1tzg362" className="block">CUT</span>
+                <span data-kizuri-edit="iiwcir" className="block">CULTURE</span>
+                <span data-kizuri-edit="1s7wf05" className="block text-copper-light">LEGACY</span>
               </h1>
               <p data-kizuri-edit="1t9x2t0" className="mt-6 max-w-lg text-base leading-relaxed text-silver/90 sm:text-lg">
                 A barber&apos;s chair is where a neighbourhood tells its stories. CLTR is a Durban grooming house built on the blade, the conversation, and the craft passed on.
@@ -308,8 +310,11 @@ export default function CltrBarbershop() {
               <p data-kizuri-edit="1u6xnmz" className="mt-4 text-xs text-silver/40">WhatsApp only — no calls, please.</p>
             </div>
           </div>
-          <div data-kizuri-edit="3d3ait" className="mt-14 border-t border-white/10 pt-6 text-xs text-silver/40">
+          <div data-kizuri-edit="3d3ait" className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-silver/40 sm:flex-row sm:items-center sm:justify-between">
             <p data-kizuri-edit="1ej68f3">© {new Date().getFullYear()} BANTU CLTR · 233 Florida Road, Durban</p>
+            <a data-kizuri-edit="ydgd4w" data-kizuri-terms-link href="/cltr-terms-and-conditions.pdf" target="_blank" rel="noopener" className="underline decoration-copper/50 underline-offset-4 transition-colors hover:text-copper-light">
+              Terms &amp; Conditions
+            </a>
           </div>
         </div>
       </footer>
